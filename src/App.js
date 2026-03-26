@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./styles/global.css";
+import { getProductos } from "./services/api";
+
+import ProductoForm from "./components/crearProductoForm";
+import VentaForm from "./components/ventaForm";
+import TablaProductos from "./components/listarProducto";
 
 function App() {
+
+  const [productos, setProductos] = useState([]);
+  const [mensaje, setMensaje] = useState("");
+
+  const cargarProductos = async () => {
+    const data = await getProductos();
+    setProductos(data);
+  };
+
+  useEffect(() => {
+    cargarProductos();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>PoliMarket</h1>
+      {mensaje && <div className="alert">{mensaje}</div>}
+
+      <div className="container">
+        <TablaProductos productos={productos} />
+        <ProductoForm refrescar={cargarProductos} />
+        <VentaForm productos={productos} refrescar={cargarProductos} />
+      </div>
     </div>
   );
 }
