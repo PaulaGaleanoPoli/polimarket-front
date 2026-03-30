@@ -18,3 +18,13 @@ export const registrarVenta = async (productoId, cantidad) => {
     method: "POST"
   });
 };
+
+export const getVentas = async () => {
+  const res = await fetch(`${API}/ventas`);
+  return res.json();
+};
+
+export const getVentaById = async (id) => {
+  const res = await fetch(`${API}/ventas/${id}`);
+  return res.json();
+};

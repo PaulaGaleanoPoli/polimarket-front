@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./styles/global.css";
-import { getProductos } from "./services/api";
+import { getProductos, getVentas } from "./services/api";
 
 import ProductoForm from "./components/crearProductoForm";
 import VentaForm from "./components/ventaForm";
 import TablaProductos from "./components/listarProducto";
+import ListarVentas from "./components/listarVentas";
 
 function App() {
 
   const [productos, setProductos] = useState([]);
+  const [ventas, setVentas] = useState([]);
   const [mensaje, setMensaje] = useState("");
 
   const cargarProductos = async () => {
@@ -16,8 +18,18 @@ function App() {
     setProductos(data);
   };
 
-  useEffect(() => {
+  const cargarVentas = async () => {
+    const data = await getVentas();
+    setVentas(data);
+  };
+
+  const refrescarTodo = () => {
     cargarProductos();
+    cargarVentas();
+  };
+
+  useEffect(() => {
+    refrescarTodo();
   }, []);
 
   return (
@@ -26,9 +38,10 @@ function App() {
       {mensaje && <div className="alert">{mensaje}</div>}
 
       <div className="container">
+        <ProductoForm refrescar={refrescarTodo} />
         <TablaProductos productos={productos} />
-        <ProductoForm refrescar={cargarProductos} />
-        <VentaForm productos={productos} refrescar={cargarProductos} />
+        <VentaForm productos={productos} refrescar={refrescarTodo}/>
+        <ListarVentas ventas={ventas} />
       </div>
     </div>
   );
